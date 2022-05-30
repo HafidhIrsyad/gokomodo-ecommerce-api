@@ -1,0 +1,465 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Gokomondo API
+  description: Restful API for ecommerce application
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/hafidhirsyad/GokomondoAPI/1.0.0
+    variables:
+      environment:
+        default: development
+        enum:
+          - "Development"
+tags:
+  - name: Auth
+  - name: Buyer
+  - name: Seller
+
+paths:
+  /seller/login:
+    post:
+      tags:
+        - Auth
+      description: Login Seller
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestLogin"
+      responses:
+        "200":
+          $ref: "#/components/responses/loginSuccess"
+        "400":
+          $ref: "#/components/responses/loginFailed"
+  /buyer/login:
+    post:
+      tags:
+        - Auth
+      description: Login Buyer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestLogin"
+      responses:
+        "200":
+          $ref: "#/components/responses/loginSuccess"
+        "400":
+          $ref: "#/components/responses/loginFailed"
+  /seller/register:
+    post:
+      tags:
+        - Auth
+      description: Register Seller
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/registerSuccess"
+        "400":
+          $ref: "#/components/responses/registerFailed"
+  /buyer/register:
+    post:
+      tags:
+        - Auth
+      description: Register Buyer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestRegister"
+      responses:
+        "200":
+          $ref: "#/components/responses/registerSuccess"
+        "400":
+          $ref: "#/components/responses/registerFailed"
+  /order/product:
+    post:
+      tags:
+        - Buyer
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/createOrderProductSuccess"
+        "400":
+          $ref: "#/components/responses/createOrderProductFailed"
+  /buyer/order-list:
+    get:
+      tags:
+        - Buyer
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/getOrderListProductSuccess"
+        "400":
+          $ref: "#/components/responses/getOrderListProductFailed"
+  /product/list:
+    get:
+      tags:
+        - Buyer
+        - Seller
+      responses:
+        "200":
+          $ref: "#/components/responses/getListProductSuccess"
+        "400":
+          $ref: "#/components/responses/getListProductFailed"
+  /seller/order-list:
+    get:
+      tags:
+        - Seller
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: ""
+        "400":
+          $ref: ""
+  /product:
+    post:
+      tags:
+        - Seller
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestCreateOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/createProductSuccess"
+        "400":
+          $ref: "#/components/responses/createProductFailed"
+  /accept-order:
+    post:
+      tags:
+        - Seller
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestAcceptOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/acceptProductSuccess"
+        "400":
+          $ref: "#/components/responses/acceptProductFailed"
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "use Token"
+  schemas:
+    RequestLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          example: seller@mail.com
+        password:
+          type: string
+          example: seller123
+    RequestRegister:
+      type: object
+      properties:
+        email:
+          type: string
+          example: seller@mail.com
+        name:
+          type: string
+          example: seller
+        password:
+          type: string
+          example: seller123
+        address:
+          type: string
+          example: Jl. SukaSuka No 123, Semarang, Indonesia
+    RequestAcceptOrder:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Accepted
+    RequestOrder:
+      type: object
+      properties:
+        seller_id:
+          type: integer
+          example: 1
+        source_address:
+          type: string
+          example: Jl. SukaSuka No 12, Krembangan Barat, Sleman
+        destination_address:
+          type: string
+          example: Jl. SukaSuka No 12, Krembangan Barat, Sleman
+        items:
+          type: string
+          example: Jl. SukaSuka No 12, Krembangan Barat, Sleman
+        quantity:
+          type: integer
+          example: 2
+        price:
+          type: integer
+          example: 2000000
+        total_price:
+          type: integer
+          example: 4000000
+        status:
+          type: string
+          example: Pending
+    RequestCreateOrder:
+      type: object
+      properties:
+        product_name:
+          type: string
+          example: Pompa Air 200W
+        price:
+          type: integer
+          example: 2000000
+        description:
+          type: string
+          example: Ini Adalah Pompa Air 200W
+  responses:
+    loginSuccess:
+      description: Login Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV9.eyJhdXRob3JpegVkIjp0cnVlLCJleHAiOjE2Mz gzMjYxODAsInVzZXJJZCI6MSaidXNlm5hbWUiOiJhZG1pbiJ9.AebFR-oQjUSOMez2ucDWkiMrS2eQIPmcYm5c71qZ_co
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: login successfully
+    loginFailed:
+      description: Login Failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: user not found
+    registerSuccess:
+      description: Register Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: register successfully
+    registerFailed:
+        description: Register Failed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: register failed
+    createOrderProductSuccess:
+      description: Create Order Product Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: success to create order product
+    createOrderProductFailed:
+      description: Create Order Product Failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: failed to create order product
+    createProductSuccess:
+      description: Create Product Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: success to create product
+    createProductFailed:
+        description: Create Product Failed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 400
+                message:
+                  type: string
+                  example: failed to create product
+    acceptProductSuccess:
+      description: Accept Product Order Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: success to accept order product
+    acceptProductFailed:
+        description: Accept Product Order Failed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 400
+                message:
+                  type: string
+                  example: failed to accept order product
+    getOrderListProductSuccess:
+      description: Success to Get Order List
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    items:
+                      type: string
+                      example: Bedak Bayi
+                    quantity:
+                      type: integer
+                      example: 2
+                    price:
+                      type: integer
+                      example: 20000
+                    total_price:
+                      type: integer
+                      example: 40000
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: success to get order list
+    getOrderListProductFailed:
+        description: Failed to Get Order List
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 400
+                message:
+                  type: string
+                  example: failed to get order list
+    getListProductSuccess:
+      description: Success to Get List Product
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    product_name:
+                      type: string
+                      example: Pompa Air 200W
+                    price:
+                      type: integer
+                      example: 2000000
+                    description:
+                      type: string
+                      example: Ini Adalah Pompa Air 200W
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: success to get list product
+    getListProductFailed:
+      description: Failed to Get List Product
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: failed to get list product
